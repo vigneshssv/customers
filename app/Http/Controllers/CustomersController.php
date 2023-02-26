@@ -14,8 +14,11 @@ class CustomersController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index() {
-        $per_page = 10;
-        $customers = Customer::orderBy('id', 'desc')->select('first_name', 'last_name', 'email', 'mobile_number', 'gender', 'id')->latest()->paginate($per_page);
+        $per_page = 5;
+        $customers = Customer::orderBy('id', 'desc')
+                    ->select('first_name', 'last_name', 'email', 'mobile_number', 'gender', 'id')
+                    ->latest()
+                    ->paginate($per_page);
         return view('customers.index', compact('customers'));
     }
 
@@ -62,6 +65,7 @@ class CustomersController extends Controller {
         }
         return redirect('customers')->with('flash_message', 'Customer Added SuccessFully...!');
     }
+
     public function edit($id) {
       
         $customers = Customer::select('id','first_name','last_name','email','mobile_number','gender')->findOrFail($id);
@@ -72,6 +76,7 @@ class CustomersController extends Controller {
         $address_types = $this->load_address_types();
         return view('customers.edit', compact('genders', 'address_types', 'customer_addresses', 'customers'));
     }
+
     public function update(Request $request, $id) {
          $this->validate($request, [
             'first_name' => ['required','max:20','regex:"^[a-zA-Z0-9 \s]*$"'],
@@ -110,15 +115,19 @@ class CustomersController extends Controller {
         }
         return redirect('customers')->with('flash_message', 'Customer Updated SuccessFully!');
     }
+
     public function destroy($id) {
-        
-        Customer::destroy($id);
-        CustomerAddress::where('customer', $id)->delete();
-        return redirect('customers')->with('flash_message', 'Customer Deleted SuccessFully!');
+        if(!empty($id)) {
+            Customer::destroy($id);
+            CustomerAddress::where('customer', $id)->delete();
+            return redirect('customers')->with('flash_message', 'Customer Deleted SuccessFully!');
+        }
     }
+
     function load_gender() {
         return array('' => 'Select Gender', 'male' => 'Male', 'female' => 'FeMale');
     }
+
     function load_address_types() {
         return array('billing' => 'Billing Address', 'shipping' => 'Shipping Address');
     }
@@ -127,7 +136,7 @@ class CustomersController extends Controller {
            $address_types = $this->load_address_types();
         return view('customers.load_address', compact('address_types'));
     }
-
+    
     public function validate_customers_form(Request $request) {
         $validation_error = array();
         $id = isset($request->id) ? $request->id : '';
@@ -176,4 +185,5 @@ class CustomersController extends Controller {
          }
          return Response::json(['success' => true], 200);
     }
+    
 }

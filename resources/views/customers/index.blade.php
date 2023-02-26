@@ -3,7 +3,7 @@
 @section('content')
 <div class="row pb-2">
 	<div class="col-md-12 p-0">
-		<a href="{{ url('/customers/create') }}" class="btn btn-sm btn-success" title="Add new Customer"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</a>
+		<a href="{{ url('/customers/create') }}" class="btn btn-sm btn-success float-right" title="Add new Customer"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</a>
 	</div>
 </div>
 
@@ -42,5 +42,8 @@
      	@endforelse
     </tbody>
   </table>
+<div class="d-flex justify-content-center">
+    {!! $customers->links() !!}
+</div>
 </div>
 @endsection
